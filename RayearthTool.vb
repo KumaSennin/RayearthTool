@@ -1,12 +1,12 @@
 ﻿Imports System.IO
 Public Class RayearthTool
-    Dim load As Boolean = False
+    Dim loadForm As Boolean = False
     Dim fontName As String = "青鸟华光简粗圆"
     Public Config As String = Application.StartupPath + "\RayearthTool.ini"
     Dim fileList As String() = {"CLEFMES.BIN", "HINTMES.BIN", "ITEMMES.BIN", "WINMSG.BIN"}
     Dim fileADVList As String() = {"INITMES.BIN"}
     Dim file0List As Int32() = {407644, 417712}
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+    Private Sub ButtonCodePage_Click(sender As Object, e As EventArgs) Handles ButtonCodePage.Click
         My.Computer.FileSystem.CreateDirectory(TextBoxDataCodePage.Text + "\CodePage_png")
         Dim subPath = Directory.GetDirectories(TextBoxGameCodePage.Text)
         ProgressBar1.Maximum = subPath.Count + 1
@@ -29,7 +29,7 @@ Public Class RayearthTool
             ProgressBar1.Value += 1
         Next
     End Sub
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+    Private Sub ButtonOut_Click(sender As Object, e As EventArgs) Handles ButtonOut.Click
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Script")
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Text")
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Data")
@@ -74,7 +74,7 @@ Public Class RayearthTool
             ProgressBar1.Value += 1
         Next
     End Sub
-    Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
+    Private Sub ButtonIn_Click(sender As Object, e As EventArgs) Handles ButtonIn.Click
         Dim subPath = Directory.GetDirectories(TextBoxGameIn.Text)
         ProgressBar1.Maximum = subPath.Count + 1
         ProgressBar1.Value = 0
@@ -97,7 +97,7 @@ Public Class RayearthTool
         Next
     End Sub
     Private Sub UpdataImage()
-        If load And TextBoxFont.Text.Length > 0 Then
+        If loadForm And TextBoxFont.Text.Length > 0 Then
             Dim tempImage As Bitmap
             Dim imageFile As String = TextBoxDataFont.Text + "\" + Char.ConvertToUtf32(TextBoxFont.Text(0), 0).ToString + ".png"
             If CheckBox1.Checked And IO.File.Exists(imageFile) Then
@@ -178,8 +178,8 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        load = True
+    Private Sub RayearthTool_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        loadForm = True
         TextBoxGameOut.Text = GetINI("Config", "GameOutPath", Application.StartupPath, Config)
         TextBoxGameIn.Text = GetINI("Config", "GameInPath", Application.StartupPath, Config)
         TextBoxGameCodePage.Text = GetINI("Config", "GameCodePagePath", Application.StartupPath, Config)
@@ -201,7 +201,7 @@ Public Class RayearthTool
         UpdataImage()
     End Sub
 
-    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+    Private Sub ButtonFontOut_Click(sender As Object, e As EventArgs) Handles ButtonFontOut.Click
         Dim subPath = Directory.GetDirectories(TextBoxGameOut.Text)
         ProgressBar1.Maximum = subPath.Count + 1
         ProgressBar1.Value = 0
@@ -224,7 +224,7 @@ Public Class RayearthTool
         Next
     End Sub
 
-    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+    Private Sub ButtonCheckText_Click(sender As Object, e As EventArgs) Handles ButtonCheckText.Click
         FolderBrowserDialog1.SelectedPath = TextBoxDataIn.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             Dim tempPath = FolderBrowserDialog1.SelectedPath
@@ -286,7 +286,7 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+    Private Sub ButtonGameOut_Click(sender As Object, e As EventArgs) Handles ButtonGameOut.Click
         FolderBrowserDialog1.SelectedPath = TextBoxGameOut.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxGameOut.Text = FolderBrowserDialog1.SelectedPath
@@ -294,21 +294,21 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button9_Click(sender As Object, e As EventArgs) Handles Button9.Click
+    Private Sub ButtonGameIn_Click(sender As Object, e As EventArgs) Handles ButtonGameIn.Click
         FolderBrowserDialog1.SelectedPath = TextBoxGameIn.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxGameIn.Text = FolderBrowserDialog1.SelectedPath
             WriteINI("Config", "GameInPath", TextBoxGameIn.Text, Config)
         End If
     End Sub
-    Private Sub Button10_Click(sender As Object, e As EventArgs) Handles Button10.Click
+    Private Sub ButtonGameCodePage_Click(sender As Object, e As EventArgs) Handles ButtonGameCodePage.Click
         FolderBrowserDialog1.SelectedPath = TextBoxGameCodePage.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxGameCodePage.Text = FolderBrowserDialog1.SelectedPath
             WriteINI("Config", "GameCodePagePath", TextBoxGameCodePage.Text, Config)
         End If
     End Sub
-    Private Sub Button7_Click(sender As Object, e As EventArgs) Handles Button7.Click
+    Private Sub ButtonDataOut_Click(sender As Object, e As EventArgs) Handles ButtonDataOut.Click
         FolderBrowserDialog1.SelectedPath = TextBoxDataOut.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxDataOut.Text = FolderBrowserDialog1.SelectedPath
@@ -316,7 +316,7 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button8_Click(sender As Object, e As EventArgs) Handles Button8.Click
+    Private Sub ButtonDataIn_Click(sender As Object, e As EventArgs) Handles ButtonDataIn.Click
         FolderBrowserDialog1.SelectedPath = TextBoxDataIn.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxDataIn.Text = FolderBrowserDialog1.SelectedPath
@@ -324,7 +324,7 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button11_Click(sender As Object, e As EventArgs) Handles Button11.Click
+    Private Sub ButtonDataCodePage_Click(sender As Object, e As EventArgs) Handles ButtonDataCodePage.Click
         FolderBrowserDialog1.SelectedPath = TextBoxDataCodePage.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxDataCodePage.Text = FolderBrowserDialog1.SelectedPath
@@ -332,7 +332,7 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button12_Click(sender As Object, e As EventArgs) Handles Button12.Click
+    Private Sub ButtonDataFont_Click(sender As Object, e As EventArgs) Handles ButtonDataFont.Click
         FolderBrowserDialog1.SelectedPath = TextBoxDataFont.Text
         If FolderBrowserDialog1.ShowDialog = DialogResult.OK Then
             TextBoxDataFont.Text = FolderBrowserDialog1.SelectedPath
@@ -340,17 +340,17 @@ Public Class RayearthTool
         End If
     End Sub
 
-    Private Sub Button13_Click(sender As Object, e As EventArgs) Handles Button13.Click
+    Private Sub ButtonDebugIn_Click(sender As Object, e As EventArgs) Handles ButtonDebugIn.Click
         Dim subPath = Directory.GetDirectories(TextBoxGameIn.Text)
         ProgressBar1.Value = 0
         ProgressBar1.Maximum = 1
-        Dim files = Directory.GetFiles(TextBoxGameIn.Text, TextBox1.Text)
+        Dim files = Directory.GetFiles(TextBoxGameIn.Text, TextBoxDebug.Text)
         Dim SpecifiedFile = TextBoxGameIn.Text + "\STAGE01\ST010.MSG"
         For i = 0 To files.Count - 1
             TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, SpecifiedFile)
         Next
         For p = 0 To subPath.Count - 1
-            files = Directory.GetFiles(subPath(p), TextBox1.Text)
+            files = Directory.GetFiles(subPath(p), TextBoxDebug.Text)
             For i = 0 To files.Count - 1
                 TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, SpecifiedFile)
             Next
