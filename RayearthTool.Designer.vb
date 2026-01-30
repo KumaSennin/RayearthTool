@@ -23,10 +23,11 @@ Partial Class RayearthTool
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RayearthTool))
+        Me.ButtonCodePage = New System.Windows.Forms.Button()
         Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
-        Me.Button2 = New System.Windows.Forms.Button()
-        Me.Button3 = New System.Windows.Forms.Button()
+        Me.ButtonOut = New System.Windows.Forms.Button()
+        Me.ButtonIn = New System.Windows.Forms.Button()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -42,28 +43,28 @@ Partial Class RayearthTool
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label3 = New System.Windows.Forms.Label()
         Me.FontDialog1 = New System.Windows.Forms.FontDialog()
-        Me.Button4 = New System.Windows.Forms.Button()
-        Me.Button5 = New System.Windows.Forms.Button()
+        Me.ButtonFontOut = New System.Windows.Forms.Button()
+        Me.ButtonCheckText = New System.Windows.Forms.Button()
         Me.PictureBox3 = New System.Windows.Forms.PictureBox()
         Me.SaveFileDialog1 = New System.Windows.Forms.SaveFileDialog()
         Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
-        Me.Button6 = New System.Windows.Forms.Button()
+        Me.ButtonGameOut = New System.Windows.Forms.Button()
         Me.TextBoxGameOut = New System.Windows.Forms.TextBox()
         Me.TextBoxDataOut = New System.Windows.Forms.TextBox()
-        Me.Button7 = New System.Windows.Forms.Button()
+        Me.ButtonDataOut = New System.Windows.Forms.Button()
         Me.TextBoxDataIn = New System.Windows.Forms.TextBox()
-        Me.Button8 = New System.Windows.Forms.Button()
+        Me.ButtonDataIn = New System.Windows.Forms.Button()
         Me.TextBoxGameIn = New System.Windows.Forms.TextBox()
-        Me.Button9 = New System.Windows.Forms.Button()
+        Me.ButtonGameIn = New System.Windows.Forms.Button()
         Me.TextBoxGameCodePage = New System.Windows.Forms.TextBox()
-        Me.Button10 = New System.Windows.Forms.Button()
+        Me.ButtonGameCodePage = New System.Windows.Forms.Button()
         Me.TextBoxDataCodePage = New System.Windows.Forms.TextBox()
-        Me.Button11 = New System.Windows.Forms.Button()
+        Me.ButtonDataCodePage = New System.Windows.Forms.Button()
         Me.TextBoxDataFont = New System.Windows.Forms.TextBox()
-        Me.Button12 = New System.Windows.Forms.Button()
-        Me.Button13 = New System.Windows.Forms.Button()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.ButtonDataFont = New System.Windows.Forms.Button()
+        Me.ButtonDebugIn = New System.Windows.Forms.Button()
+        Me.TextBoxDebug = New System.Windows.Forms.TextBox()
         Me.Label4 = New System.Windows.Forms.Label()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.ContextMenuStrip1.SuspendLayout()
@@ -74,14 +75,14 @@ Partial Class RayearthTool
         CType(Me.PictureBox3, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
-        'Button1
+        'ButtonCodePage
         '
-        Me.Button1.Location = New System.Drawing.Point(292, 154)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(94, 48)
-        Me.Button1.TabIndex = 0
-        Me.Button1.Text = "导出代码页"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.ButtonCodePage.Location = New System.Drawing.Point(292, 154)
+        Me.ButtonCodePage.Name = "ButtonCodePage"
+        Me.ButtonCodePage.Size = New System.Drawing.Size(94, 48)
+        Me.ButtonCodePage.TabIndex = 0
+        Me.ButtonCodePage.Text = "导出代码页"
+        Me.ButtonCodePage.UseVisualStyleBackColor = True
         '
         'ProgressBar1
         '
@@ -90,23 +91,23 @@ Partial Class RayearthTool
         Me.ProgressBar1.Size = New System.Drawing.Size(374, 23)
         Me.ProgressBar1.TabIndex = 1
         '
-        'Button2
+        'ButtonOut
         '
-        Me.Button2.Location = New System.Drawing.Point(292, 208)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(94, 48)
-        Me.Button2.TabIndex = 2
-        Me.Button2.Text = "导出数据"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.ButtonOut.Location = New System.Drawing.Point(292, 208)
+        Me.ButtonOut.Name = "ButtonOut"
+        Me.ButtonOut.Size = New System.Drawing.Size(94, 48)
+        Me.ButtonOut.TabIndex = 2
+        Me.ButtonOut.Text = "导出数据"
+        Me.ButtonOut.UseVisualStyleBackColor = True
         '
-        'Button3
+        'ButtonIn
         '
-        Me.Button3.Location = New System.Drawing.Point(292, 262)
-        Me.Button3.Name = "Button3"
-        Me.Button3.Size = New System.Drawing.Size(94, 48)
-        Me.Button3.TabIndex = 3
-        Me.Button3.Text = "导入数据"
-        Me.Button3.UseVisualStyleBackColor = True
+        Me.ButtonIn.Location = New System.Drawing.Point(292, 262)
+        Me.ButtonIn.Name = "ButtonIn"
+        Me.ButtonIn.Size = New System.Drawing.Size(94, 48)
+        Me.ButtonIn.TabIndex = 3
+        Me.ButtonIn.Text = "导入数据"
+        Me.ButtonIn.UseVisualStyleBackColor = True
         '
         'PictureBox1
         '
@@ -238,23 +239,23 @@ Partial Class RayearthTool
         '
         Me.FontDialog1.Font = New System.Drawing.Font("青鸟华光简粗圆", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         '
-        'Button4
+        'ButtonFontOut
         '
-        Me.Button4.Location = New System.Drawing.Point(292, 342)
-        Me.Button4.Name = "Button4"
-        Me.Button4.Size = New System.Drawing.Size(94, 26)
-        Me.Button4.TabIndex = 17
-        Me.Button4.Text = "导出字符"
-        Me.Button4.UseVisualStyleBackColor = True
+        Me.ButtonFontOut.Location = New System.Drawing.Point(292, 342)
+        Me.ButtonFontOut.Name = "ButtonFontOut"
+        Me.ButtonFontOut.Size = New System.Drawing.Size(94, 26)
+        Me.ButtonFontOut.TabIndex = 17
+        Me.ButtonFontOut.Text = "导出字符"
+        Me.ButtonFontOut.UseVisualStyleBackColor = True
         '
-        'Button5
+        'ButtonCheckText
         '
-        Me.Button5.Location = New System.Drawing.Point(206, 342)
-        Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(80, 26)
-        Me.Button5.TabIndex = 18
-        Me.Button5.Text = "文本校检"
-        Me.Button5.UseVisualStyleBackColor = True
+        Me.ButtonCheckText.Location = New System.Drawing.Point(206, 342)
+        Me.ButtonCheckText.Name = "ButtonCheckText"
+        Me.ButtonCheckText.Size = New System.Drawing.Size(80, 26)
+        Me.ButtonCheckText.TabIndex = 18
+        Me.ButtonCheckText.Text = "文本校检"
+        Me.ButtonCheckText.UseVisualStyleBackColor = True
         '
         'PictureBox3
         '
@@ -283,14 +284,14 @@ Partial Class RayearthTool
         Me.CheckBox1.Text = "保留符号"
         Me.CheckBox1.UseVisualStyleBackColor = True
         '
-        'Button6
+        'ButtonGameOut
         '
-        Me.Button6.Location = New System.Drawing.Point(206, 208)
-        Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(80, 21)
-        Me.Button6.TabIndex = 21
-        Me.Button6.Text = "游戏目录"
-        Me.Button6.UseVisualStyleBackColor = True
+        Me.ButtonGameOut.Location = New System.Drawing.Point(206, 208)
+        Me.ButtonGameOut.Name = "ButtonGameOut"
+        Me.ButtonGameOut.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonGameOut.TabIndex = 21
+        Me.ButtonGameOut.Text = "游戏目录"
+        Me.ButtonGameOut.UseVisualStyleBackColor = True
         '
         'TextBoxGameOut
         '
@@ -306,14 +307,14 @@ Partial Class RayearthTool
         Me.TextBoxDataOut.Size = New System.Drawing.Size(188, 21)
         Me.TextBoxDataOut.TabIndex = 24
         '
-        'Button7
+        'ButtonDataOut
         '
-        Me.Button7.Location = New System.Drawing.Point(206, 235)
-        Me.Button7.Name = "Button7"
-        Me.Button7.Size = New System.Drawing.Size(80, 21)
-        Me.Button7.TabIndex = 23
-        Me.Button7.Text = "数据目录"
-        Me.Button7.UseVisualStyleBackColor = True
+        Me.ButtonDataOut.Location = New System.Drawing.Point(206, 235)
+        Me.ButtonDataOut.Name = "ButtonDataOut"
+        Me.ButtonDataOut.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonDataOut.TabIndex = 23
+        Me.ButtonDataOut.Text = "数据目录"
+        Me.ButtonDataOut.UseVisualStyleBackColor = True
         '
         'TextBoxDataIn
         '
@@ -322,14 +323,14 @@ Partial Class RayearthTool
         Me.TextBoxDataIn.Size = New System.Drawing.Size(188, 21)
         Me.TextBoxDataIn.TabIndex = 26
         '
-        'Button8
+        'ButtonDataIn
         '
-        Me.Button8.Location = New System.Drawing.Point(206, 289)
-        Me.Button8.Name = "Button8"
-        Me.Button8.Size = New System.Drawing.Size(80, 21)
-        Me.Button8.TabIndex = 25
-        Me.Button8.Text = "数据目录"
-        Me.Button8.UseVisualStyleBackColor = True
+        Me.ButtonDataIn.Location = New System.Drawing.Point(206, 289)
+        Me.ButtonDataIn.Name = "ButtonDataIn"
+        Me.ButtonDataIn.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonDataIn.TabIndex = 25
+        Me.ButtonDataIn.Text = "数据目录"
+        Me.ButtonDataIn.UseVisualStyleBackColor = True
         '
         'TextBoxGameIn
         '
@@ -338,14 +339,14 @@ Partial Class RayearthTool
         Me.TextBoxGameIn.Size = New System.Drawing.Size(188, 21)
         Me.TextBoxGameIn.TabIndex = 28
         '
-        'Button9
+        'ButtonGameIn
         '
-        Me.Button9.Location = New System.Drawing.Point(206, 262)
-        Me.Button9.Name = "Button9"
-        Me.Button9.Size = New System.Drawing.Size(80, 21)
-        Me.Button9.TabIndex = 27
-        Me.Button9.Text = "游戏目录"
-        Me.Button9.UseVisualStyleBackColor = True
+        Me.ButtonGameIn.Location = New System.Drawing.Point(206, 262)
+        Me.ButtonGameIn.Name = "ButtonGameIn"
+        Me.ButtonGameIn.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonGameIn.TabIndex = 27
+        Me.ButtonGameIn.Text = "游戏目录"
+        Me.ButtonGameIn.UseVisualStyleBackColor = True
         '
         'TextBoxGameCodePage
         '
@@ -354,14 +355,14 @@ Partial Class RayearthTool
         Me.TextBoxGameCodePage.Size = New System.Drawing.Size(188, 21)
         Me.TextBoxGameCodePage.TabIndex = 30
         '
-        'Button10
+        'ButtonGameCodePage
         '
-        Me.Button10.Location = New System.Drawing.Point(206, 154)
-        Me.Button10.Name = "Button10"
-        Me.Button10.Size = New System.Drawing.Size(80, 21)
-        Me.Button10.TabIndex = 29
-        Me.Button10.Text = "游戏目录"
-        Me.Button10.UseVisualStyleBackColor = True
+        Me.ButtonGameCodePage.Location = New System.Drawing.Point(206, 154)
+        Me.ButtonGameCodePage.Name = "ButtonGameCodePage"
+        Me.ButtonGameCodePage.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonGameCodePage.TabIndex = 29
+        Me.ButtonGameCodePage.Text = "游戏目录"
+        Me.ButtonGameCodePage.UseVisualStyleBackColor = True
         '
         'TextBoxDataCodePage
         '
@@ -370,14 +371,14 @@ Partial Class RayearthTool
         Me.TextBoxDataCodePage.Size = New System.Drawing.Size(188, 21)
         Me.TextBoxDataCodePage.TabIndex = 32
         '
-        'Button11
+        'ButtonDataCodePage
         '
-        Me.Button11.Location = New System.Drawing.Point(206, 181)
-        Me.Button11.Name = "Button11"
-        Me.Button11.Size = New System.Drawing.Size(80, 21)
-        Me.Button11.TabIndex = 31
-        Me.Button11.Text = "数据目录"
-        Me.Button11.UseVisualStyleBackColor = True
+        Me.ButtonDataCodePage.Location = New System.Drawing.Point(206, 181)
+        Me.ButtonDataCodePage.Name = "ButtonDataCodePage"
+        Me.ButtonDataCodePage.Size = New System.Drawing.Size(80, 21)
+        Me.ButtonDataCodePage.TabIndex = 31
+        Me.ButtonDataCodePage.Text = "数据目录"
+        Me.ButtonDataCodePage.UseVisualStyleBackColor = True
         '
         'TextBoxDataFont
         '
@@ -386,31 +387,31 @@ Partial Class RayearthTool
         Me.TextBoxDataFont.Size = New System.Drawing.Size(274, 21)
         Me.TextBoxDataFont.TabIndex = 34
         '
-        'Button12
+        'ButtonDataFont
         '
-        Me.Button12.Location = New System.Drawing.Point(292, 98)
-        Me.Button12.Name = "Button12"
-        Me.Button12.Size = New System.Drawing.Size(94, 21)
-        Me.Button12.TabIndex = 33
-        Me.Button12.Text = "字符目录"
-        Me.Button12.UseVisualStyleBackColor = True
+        Me.ButtonDataFont.Location = New System.Drawing.Point(292, 98)
+        Me.ButtonDataFont.Name = "ButtonDataFont"
+        Me.ButtonDataFont.Size = New System.Drawing.Size(94, 21)
+        Me.ButtonDataFont.TabIndex = 33
+        Me.ButtonDataFont.Text = "字符目录"
+        Me.ButtonDataFont.UseVisualStyleBackColor = True
         '
-        'Button13
+        'ButtonDebugIn
         '
-        Me.Button13.Location = New System.Drawing.Point(118, 342)
-        Me.Button13.Name = "Button13"
-        Me.Button13.Size = New System.Drawing.Size(82, 26)
-        Me.Button13.TabIndex = 35
-        Me.Button13.Text = "定向导入"
-        Me.Button13.UseVisualStyleBackColor = True
+        Me.ButtonDebugIn.Location = New System.Drawing.Point(118, 342)
+        Me.ButtonDebugIn.Name = "ButtonDebugIn"
+        Me.ButtonDebugIn.Size = New System.Drawing.Size(82, 26)
+        Me.ButtonDebugIn.TabIndex = 35
+        Me.ButtonDebugIn.Text = "定向导入"
+        Me.ButtonDebugIn.UseVisualStyleBackColor = True
         '
-        'TextBox1
+        'TextBoxDebug
         '
-        Me.TextBox1.Location = New System.Drawing.Point(12, 346)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(100, 21)
-        Me.TextBox1.TabIndex = 36
-        Me.TextBox1.Text = "ST.MSG"
+        Me.TextBoxDebug.Location = New System.Drawing.Point(12, 346)
+        Me.TextBoxDebug.Name = "TextBoxDebug"
+        Me.TextBoxDebug.Size = New System.Drawing.Size(100, 21)
+        Me.TextBoxDebug.TabIndex = 36
+        Me.TextBoxDebug.Text = "ST.MSG"
         '
         'Label4
         '
@@ -427,26 +428,26 @@ Partial Class RayearthTool
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(395, 379)
         Me.Controls.Add(Me.Label4)
-        Me.Controls.Add(Me.TextBox1)
-        Me.Controls.Add(Me.Button13)
+        Me.Controls.Add(Me.TextBoxDebug)
+        Me.Controls.Add(Me.ButtonDebugIn)
         Me.Controls.Add(Me.TextBoxDataFont)
-        Me.Controls.Add(Me.Button12)
+        Me.Controls.Add(Me.ButtonDataFont)
         Me.Controls.Add(Me.TextBoxDataCodePage)
-        Me.Controls.Add(Me.Button11)
+        Me.Controls.Add(Me.ButtonDataCodePage)
         Me.Controls.Add(Me.TextBoxGameCodePage)
-        Me.Controls.Add(Me.Button10)
+        Me.Controls.Add(Me.ButtonGameCodePage)
         Me.Controls.Add(Me.TextBoxGameIn)
-        Me.Controls.Add(Me.Button9)
+        Me.Controls.Add(Me.ButtonGameIn)
         Me.Controls.Add(Me.TextBoxDataIn)
-        Me.Controls.Add(Me.Button8)
+        Me.Controls.Add(Me.ButtonDataIn)
         Me.Controls.Add(Me.TextBoxDataOut)
-        Me.Controls.Add(Me.Button7)
+        Me.Controls.Add(Me.ButtonDataOut)
         Me.Controls.Add(Me.TextBoxGameOut)
-        Me.Controls.Add(Me.Button6)
+        Me.Controls.Add(Me.ButtonGameOut)
         Me.Controls.Add(Me.CheckBox1)
         Me.Controls.Add(Me.PictureBox3)
-        Me.Controls.Add(Me.Button5)
-        Me.Controls.Add(Me.Button4)
+        Me.Controls.Add(Me.ButtonCheckText)
+        Me.Controls.Add(Me.ButtonFontOut)
         Me.Controls.Add(Me.Label3)
         Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label1)
@@ -459,10 +460,11 @@ Partial Class RayearthTool
         Me.Controls.Add(Me.TextBoxFont)
         Me.Controls.Add(Me.PictureBox2)
         Me.Controls.Add(Me.PictureBox1)
-        Me.Controls.Add(Me.Button3)
-        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.ButtonIn)
+        Me.Controls.Add(Me.ButtonOut)
         Me.Controls.Add(Me.ProgressBar1)
-        Me.Controls.Add(Me.Button1)
+        Me.Controls.Add(Me.ButtonCodePage)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.MaximumSize = New System.Drawing.Size(628, 472)
         Me.MinimizeBox = False
@@ -482,10 +484,10 @@ Partial Class RayearthTool
 
     End Sub
 
-    Friend WithEvents Button1 As Button
+    Friend WithEvents ButtonCodePage As Button
     Friend WithEvents ProgressBar1 As ProgressBar
-    Friend WithEvents Button2 As Button
-    Friend WithEvents Button3 As Button
+    Friend WithEvents ButtonOut As Button
+    Friend WithEvents ButtonIn As Button
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents TextBoxFont As TextBox
@@ -499,29 +501,29 @@ Partial Class RayearthTool
     Friend WithEvents Label2 As Label
     Friend WithEvents Label3 As Label
     Friend WithEvents FontDialog1 As FontDialog
-    Friend WithEvents Button5 As Button
-    Friend WithEvents Button4 As Button
+    Friend WithEvents ButtonCheckText As Button
+    Friend WithEvents ButtonFontOut As Button
     Friend WithEvents PictureBox3 As PictureBox
     Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
     Friend WithEvents ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents SaveFileDialog1 As SaveFileDialog
     Friend WithEvents CheckBox1 As CheckBox
     Friend WithEvents FolderBrowserDialog1 As FolderBrowserDialog
-    Friend WithEvents Button6 As Button
+    Friend WithEvents ButtonGameOut As Button
     Friend WithEvents TextBoxGameOut As TextBox
     Friend WithEvents TextBoxDataOut As TextBox
-    Friend WithEvents Button7 As Button
+    Friend WithEvents ButtonDataOut As Button
     Friend WithEvents TextBoxDataIn As TextBox
-    Friend WithEvents Button8 As Button
+    Friend WithEvents ButtonDataIn As Button
     Friend WithEvents TextBoxGameIn As TextBox
-    Friend WithEvents Button9 As Button
+    Friend WithEvents ButtonGameIn As Button
     Friend WithEvents TextBoxGameCodePage As TextBox
-    Friend WithEvents Button10 As Button
+    Friend WithEvents ButtonGameCodePage As Button
     Friend WithEvents TextBoxDataCodePage As TextBox
-    Friend WithEvents Button11 As Button
+    Friend WithEvents ButtonDataCodePage As Button
     Friend WithEvents TextBoxDataFont As TextBox
-    Friend WithEvents Button12 As Button
-    Friend WithEvents Button13 As Button
-    Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents ButtonDataFont As Button
+    Friend WithEvents ButtonDebugIn As Button
+    Friend WithEvents TextBoxDebug As TextBox
     Friend WithEvents Label4 As Label
 End Class

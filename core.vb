@@ -1,46 +1,5 @@
 ﻿Imports System.IO
 Module core
-    Dim excludeList As New Dictionary(Of String, Integer) From {
-        {"ST060.MSG", 19},
-        {"ST064.MSG", 19},
-        {"ST065.MSG", 19},
-        {"ST066.MSG", 19},
-        {"ST067.MSG", 19},
-        {"ST068.MSG", 19},
-        {"ST090.MSG", 16},
-        {"ST092.MSG", 16},
-        {"ST094.MSG", 17},
-        {"ST095.MSG", 17},
-        {"ST130.MSG", 21},
-        {"ST133.MSG", 21},
-        {"ST150.MSG", 21},
-        {"ST153.MSG", 21},
-        {"ST160.MSG", 20},
-        {"ST166.MSG", 20},
-        {"ST180.MSG", 18},
-        {"ST183.MSG", 18},
-        {"ST260.MSG", 17},
-        {"ST265.MSG", 17},
-        {"ST266.MSG", 17},
-        {"ST267.MSG", 17},
-        {"ST268.MSG", 17},
-        {"ST330.MSG", 17},
-        {"ST336.MSG", 17},
-        {"ST337.MSG", 17},
-        {"ST338.MSG", 17},
-        {"ST350.MSG", 12},
-        {"ST357.MSG", 12},
-        {"ST730.MSG", 23},
-        {"ST734.MSG", 23},
-        {"ST735.MSG", 23},
-        {"ST736.MSG", 23},
-        {"ST737.MSG", 23},
-        {"ST738.MSG", 23},
-        {"ST760.MSG", 22},
-        {"ST763.MSG", 22},
-        {"ST764.MSG", 22},
-        {"EV006.MSG", 26},
-        {"CLEFMES.BIN", 15}}
     Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Int32, ByVal lpFileName As String) As Int32
     Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpString As String, ByVal lpFileName As String) As Int32
     Public Function GetINI(ByVal Section As String, ByVal AppName As String, ByVal lpDefault As String, ByVal FileName As String) As String
@@ -424,11 +383,12 @@ Module core
         Dim scriptFile As String = file
         Dim codePage As String() = {}
         Dim lineText As String() = {}
+        Dim iniFile As String = dataPath + "\FaceFix\" + file + ".ini"
         Dim fileMax As UInt32 = 196608
         If textFile.Contains("ST") And Not IO.File.Exists(dataPath + "\Text\" + textFile + ".csv") Then
             textFile = Mid(file, 1, 4) + "0" + Mid(file, 6)
         End If
-        If excludeList.ContainsKey(file) Then
+        If IO.File.Exists(iniFile) Then
             excludeData = True
         End If
         If Offset > 0 Then
@@ -524,12 +484,19 @@ Module core
                                     excludeStatus = False
                                 Case Else
                                     Dim tempIndex As Byte = Convert.ToByte(str)
-                                    If excludeList(file) >= tempIndex Then
-                                        bw.Write({17})
-                                        bw.Write({excludeTempPos})
-                                        bw.Write({tempIndex})
-                                        excludeStatus = False
+                                    Dim faceConfigValue As String = GetINI("Pointer", "Face" + tempIndex.ToString(), "", iniFile)
+                                    If Not String.IsNullOrEmpty(faceConfigValue) Then
+                                        Dim parsedValue As Byte
+                                        If Byte.TryParse(faceConfigValue, parsedValue) Then
+                                            tempIndex = parsedValue
+                                        Else
+                                            Exit Select
+                                        End If
                                     End If
+                                    bw.Write({17})
+                                    bw.Write({excludeTempPos})
+                                    bw.Write({tempIndex})
+                                    excludeStatus = False
                             End Select
                         End If
                     Else
@@ -715,8 +682,6 @@ Module core
             Do Until fs.Position >= Offset + fileMax
                 bw.Write({0})
             Loop
-            MsgBox(fs.Position - Offset)
-            MsgBox(fileMax)
         End If
         head(2) = fs.Position - Offset
         If IO.File.Exists(dataPath + "\Data\" + file + ".dat") Then
