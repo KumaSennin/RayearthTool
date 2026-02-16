@@ -484,19 +484,12 @@ Module core
                                     excludeStatus = False
                                 Case Else
                                     Dim tempIndex As Byte = Convert.ToByte(str)
-                                    Dim faceConfigValue As String = GetINI("Pointer", "Face" + tempIndex.ToString(), "", iniFile)
-                                    If Not String.IsNullOrEmpty(faceConfigValue) Then
-                                        Dim parsedValue As Byte
-                                        If Byte.TryParse(faceConfigValue, parsedValue) Then
-                                            tempIndex = parsedValue
-                                        Else
-                                            Exit Select
-                                        End If
+                                    If excludeList(file) >= tempIndex Then
+                                        bw.Write({17})
+                                        bw.Write({excludeTempPos})
+                                        bw.Write({tempIndex})
+                                        excludeStatus = False
                                     End If
-                                    bw.Write({17})
-                                    bw.Write({excludeTempPos})
-                                    bw.Write({tempIndex})
-                                    excludeStatus = False
                             End Select
                         End If
                     Else
