@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Runtime.CompilerServices
 Public Class RayearthTool
     Dim loadForm As Boolean = False
     Dim fontName As String = "青鸟华光简粗圆"
@@ -347,12 +348,12 @@ Public Class RayearthTool
         Dim files = Directory.GetFiles(TextBoxGameIn.Text, TextBoxDebug.Text)
         Dim SpecifiedFile = TextBoxGameIn.Text + "\STAGE01\ST010.MSG"
         For i = 0 To files.Count - 1
-            TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, SpecifiedFile)
+            TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, 0, SpecifiedFile)
         Next
         For p = 0 To subPath.Count - 1
             files = Directory.GetFiles(subPath(p), TextBoxDebug.Text)
             For i = 0 To files.Count - 1
-                TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, SpecifiedFile)
+                TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, files(i), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked, 0, SpecifiedFile)
             Next
         Next
         ProgressBar1.Value = ProgressBar1.Maximum
