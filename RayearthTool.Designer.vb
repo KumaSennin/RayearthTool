@@ -23,7 +23,6 @@ Partial Class RayearthTool
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(RayearthTool))
         Me.ButtonCodePage = New System.Windows.Forms.Button()
         Me.ProgressBar1 = New System.Windows.Forms.ProgressBar()
         Me.ButtonOut = New System.Windows.Forms.Button()
@@ -464,7 +463,6 @@ Partial Class RayearthTool
         Me.Controls.Add(Me.ButtonOut)
         Me.Controls.Add(Me.ProgressBar1)
         Me.Controls.Add(Me.ButtonCodePage)
-        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.MaximumSize = New System.Drawing.Size(628, 472)
         Me.MinimizeBox = False

@@ -1,5 +1,4 @@
 ﻿Imports System.IO
-Imports System.Runtime.CompilerServices
 Public Class RayearthTool
     Dim loadForm As Boolean = False
     Dim fontName As String = "青鸟华光简粗圆"
@@ -34,8 +33,10 @@ Public Class RayearthTool
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Script")
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Text")
         My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Data")
+        My.Computer.FileSystem.CreateDirectory(TextBoxDataOut.Text + "\Diary")
         Dim subPath = Directory.GetDirectories(TextBoxGameOut.Text)
-        ProgressBar1.Maximum = subPath.Count + 1
+        Dim subDiaryFile = Directory.GetFiles(TextBoxGameOut.Text + "\Diary", "ENIKKI*.BIN")
+        ProgressBar1.Maximum = subPath.Count + subDiaryFile.Count + 1
         ProgressBar1.Value = 0
         For f = 0 To fileList.Count - 1
             Dim tempString = MSG2TXT(True, TextBoxDataOut.Text, TextBoxGameOut.Text + "\" + fileList(f))
@@ -74,10 +75,16 @@ Public Class RayearthTool
             Next
             ProgressBar1.Value += 1
         Next
+        For f = 0 To subDiaryFile.Count - 1
+            Dim path As String = TextBoxDataOut.Text + "\Diary\" + IO.Path.GetFileName(subDiaryFile(f))
+            UnpackBinFile(subDiaryFile(f), path)
+            ProgressBar1.Value += 1
+        Next
     End Sub
     Private Sub ButtonIn_Click(sender As Object, e As EventArgs) Handles ButtonIn.Click
         Dim subPath = Directory.GetDirectories(TextBoxGameIn.Text)
-        ProgressBar1.Maximum = subPath.Count + 1
+        Dim subDiaryFile = Directory.GetFiles(TextBoxGameIn.Text + "\Diary", "ENIKKI*.BIN")
+        ProgressBar1.Maximum = subPath.Count + subDiaryFile.Count + 1
         ProgressBar1.Value = 0
         For f = 0 To fileList.Count - 1
             TEXT2MSG(TextBoxDataFont.Text, TextBoxDataIn.Text, TextBoxGameIn.Text + "\" + fileList(f), fontName, NumericUpDownSize.Value, NumericUpDownX.Value, NumericUpDownY.Value, CheckBoxBold.Checked, CheckBoxPixel.Checked, CheckBox1.Checked)
@@ -96,6 +103,14 @@ Public Class RayearthTool
             Next
             ProgressBar1.Value += 1
         Next
+        For f = 0 To subDiaryFile.Count - 1
+            Dim path As String = TextBoxDataIn.Text + "\Diary\" + IO.Path.GetFileName(subDiaryFile(f))
+            If IO.Directory.Exists(path) Then
+                PackToBinFile(path, subDiaryFile(f))
+            End If
+            ProgressBar1.Value += 1
+        Next
+
     End Sub
     Private Sub UpdataImage()
         If loadForm And TextBoxFont.Text.Length > 0 Then

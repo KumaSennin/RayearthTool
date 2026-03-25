@@ -1,4 +1,8 @@
-﻿Imports System.IO
+﻿Imports System.Drawing.Imaging
+Imports System.IO
+Imports System.Net
+Imports System.Text
+
 Module core
     Private Declare Function GetPrivateProfileString Lib "kernel32" Alias "GetPrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpDefault As String, ByVal lpReturnedString As String, ByVal nSize As Int32, ByVal lpFileName As String) As Int32
     Private Declare Function WritePrivateProfileString Lib "kernel32" Alias "WritePrivateProfileStringA" (ByVal lpApplicationName As String, ByVal lpKeyName As String, ByVal lpString As String, ByVal lpFileName As String) As Int32
@@ -795,11 +799,11 @@ Module core
             Dim n = i Mod 16
             Dim l = (i - n) / 16
             If IO.File.Exists(dataPath + "\Font\General\" + Char.ConvertToUtf32(codeText(l)(n), 0).ToString + ".png") Then
-                Dim tempIamge As Bitmap = New Bitmap(dataPath + "\Font\General\" + Char.ConvertToUtf32(codeText(l)(n), 0).ToString + ".png")
+                Dim tempImage As Bitmap = New Bitmap(dataPath + "\Font\General\" + Char.ConvertToUtf32(codeText(l)(n), 0).ToString + ".png")
                 Dim difference As Boolean = False
                 For x = 0 To fonts(i).Width - 1
                     For y = 0 To fonts(i).Height - 1
-                        If Not fonts(i).GetPixel(x, y).A = tempIamge.GetPixel(x, y).A Then
+                        If Not fonts(i).GetPixel(x, y).A = tempImage.GetPixel(x, y).A Then
                             difference = True
                             Exit For
                         End If
@@ -877,5 +881,298 @@ Module core
             index += find.Length
         End While
         Return count
+    End Function
+    Private Function CompressData(src As Byte()) As Byte()
+        If src.Length Mod 2 <> 0 Then
+            Array.Resize(src, src.Length + 1)
+            src(src.Length - 1) = 0
+        End If
+        Dim srcWords As New List(Of UShort)()
+        For i As Integer = 0 To src.Length - 1 Step 2
+            srcWords.Add(CUShort(src(i)) << 8 Or src(i + 1))
+        Next
+        Dim dst As New List(Of Byte)()
+        Dim pos As Integer = 0
+        While pos < srcWords.Count
+            Dim chunkOps As New List(Of (IsLiteral As Boolean, Value As UShort))()
+            Dim tempPos As Integer = pos
+            For opIdx As Integer = 0 To 15
+                If tempPos >= srcWords.Count Then Exit For
+                Dim bestLen As Integer = 0
+                Dim bestDisp As Integer = 0
+                Dim startSearch As Integer = Math.Max(0, tempPos - 1024)
+                Dim currentWord As UShort = srcWords(tempPos)
+                Dim maxMatchLen As Integer = Math.Min(64, srcWords.Count - tempPos)
+                Dim foundMatch As Boolean = False
+                If maxMatchLen >= 1 Then
+                    For i As Integer = tempPos - 1 To startSearch Step -1
+                        If srcWords(i) = currentWord Then
+                            Dim matchLen As Integer = 1
+                            While matchLen < maxMatchLen AndAlso srcWords(i + matchLen) = srcWords(tempPos + matchLen)
+                                matchLen += 1
+                            End While
+
+                            If matchLen > bestLen Then
+                                bestLen = matchLen
+                                bestDisp = (i - tempPos) * 2
+                                If bestLen = 64 Then Exit For
+                            End If
+                        End If
+                    Next
+                    If bestLen >= 1 Then
+                        Dim dispVal As Integer = bestDisp + &H800
+                        Dim lenVal As Integer = bestLen - 1
+                        Dim val As UShort = CUShort(((dispVal And &H7FE) << 5) Or (lenVal And &H3F))
+                        If val <> 0 Then
+                            chunkOps.Add((False, val))
+                            tempPos += bestLen
+                            foundMatch = True
+                        End If
+                    End If
+                End If
+                If Not foundMatch Then
+                    chunkOps.Add((True, srcWords(tempPos)))
+                    tempPos += 1
+                End If
+            Next
+            Dim flags As UShort = 0
+            For i As Integer = 0 To chunkOps.Count - 1
+                If chunkOps(i).IsLiteral Then
+                    flags = CUShort(flags Or (1 << (15 - i)))
+                End If
+            Next
+            dst.Add(CByte(flags >> 8))
+            dst.Add(CByte(flags And &HFF))
+            For Each op In chunkOps
+                dst.Add(CByte(op.Value >> 8))
+                dst.Add(CByte(op.Value And &HFF))
+            Next
+            pos = tempPos
+        End While
+        dst.Add(0) ' Flags = 0
+        dst.Add(0)
+        dst.Add(0) ' Ref = 0 (结束标志)
+        dst.Add(0)
+        Return dst.ToArray()
+    End Function
+    Private Function DecompressData(src As Byte()) As Byte()
+        If src Is Nothing OrElse src.Length = 0 Then Return New Byte() {}
+        Dim srcPos As Integer = 0
+        Dim dst As New List(Of Byte)()
+        Dim cmpFlgCtr As Integer = 16
+        Dim cmpFlg As UShort = 0
+        While srcPos < src.Length
+            If cmpFlgCtr = 16 Then
+                If srcPos + 2 > src.Length Then Exit While
+                cmpFlg = CUShort(src(srcPos)) << 8 Or src(srcPos + 1)
+                srcPos += 2
+                cmpFlgCtr = 0
+            End If
+            cmpFlgCtr += 1
+            Dim isLiteral As Boolean = (cmpFlg And &H8000) <> 0
+            cmpFlg = CUShort((cmpFlg << 1) And &HFFFF)
+            If srcPos + 2 > src.Length Then Exit While
+            Dim val As UShort = CUShort(src(srcPos)) << 8 Or src(srcPos + 1)
+            srcPos += 2
+            If isLiteral Then
+                dst.Add(CByte(val >> 8))
+                dst.Add(CByte(val And &HFF))
+            Else
+                If val = 0 Then Exit While
+                Dim dispEncoded As Integer = (val >> 5) And &H7FE
+                Dim disp As Integer = dispEncoded - &H800
+                Dim copySrcPos As Integer = dst.Count + disp
+                Dim count As Integer = (val And &H3F) + 1
+                For i As Integer = 1 To count
+                    Dim word As UShort = 0
+                    If copySrcPos >= 0 AndAlso copySrcPos + 2 <= dst.Count Then
+                        word = CUShort(dst(copySrcPos)) << 8 Or dst(copySrcPos + 1)
+                    End If
+                    dst.Add(CByte(word >> 8))
+                    dst.Add(CByte(word And &HFF))
+                    copySrcPos += 2
+                Next
+            End If
+        End While
+        Return dst.ToArray()
+    End Function
+
+    Public Sub UnpackBinFile(filePath As String, outputDir As String)
+        If Not File.Exists(filePath) Then
+            Return
+        End If
+        If Not Directory.Exists(outputDir) Then
+            Directory.CreateDirectory(outputDir)
+        End If
+        Dim fs As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+        Dim br As New BinaryReader(fs, Encoding.ASCII)
+        Dim num As UInteger = IPAddress.NetworkToHostOrder(br.ReadInt32())
+        Dim sizes As New List(Of UInteger)()
+        For i As Integer = 0 To num - 1
+            sizes.Add(IPAddress.NetworkToHostOrder(br.ReadInt32()))
+        Next
+        fs.Seek(num * 4 + 4, SeekOrigin.Begin)
+        For i As Integer = 0 To num - 1
+            Dim size As Integer = CInt(sizes(i))
+            Dim compressedData As Byte() = br.ReadBytes(size)
+            If compressedData.Length <> size Then
+                Continue For
+            End If
+            Dim decompressedData As Byte() = DecompressData(compressedData)
+            Dim outName As String = Path.Combine(outputDir, $"head_{i:00}.dat")
+            Dim colorNum As Integer = decompressedData(2) * 256 + decompressedData(3)
+            Dim width As Integer = decompressedData(4) * 256 + decompressedData(5)
+            Dim height As Integer = decompressedData(6) * 256 + decompressedData(7)
+            Dim begin As Integer = decompressedData(8) * 16777216 + decompressedData(9) * 65535 + decompressedData(10) * 256 + decompressedData(11)
+            Dim data(begin - 1) As Byte
+            Array.Copy(decompressedData, data, begin)
+            File.WriteAllBytes(outName, data)
+            Dim colors As Color() = PAL2COL(decompressedData, 16, colorNum)
+            Dim tempBitmap = New Bitmap(width, height)
+            For y = 0 To height - 1
+                For x = 0 To width - 1
+                    Dim a As Byte = decompressedData(begin + width * y + x)
+                    tempBitmap.SetPixel(x, y, colors(a))
+                Next
+            Next
+            tempBitmap.Save(Path.Combine(outputDir, $"image_{i:00}.png"))
+        Next
+        br.Close()
+        fs.Close()
+    End Sub
+    Public Function PAL2COL(data As Byte(), Optional begin As Int32 = 0, Optional num As Int16 = 256) As Color()
+        Dim tempColor(num - 1) As Color
+        For i = 0 To num - 1
+            Dim str1 As String = Convert.ToString(data(begin + i * 2), 2)
+            Do Until str1.Length >= 8
+                str1 = "0" + str1
+            Loop
+            Dim str2 As String = Convert.ToString(data(begin + i * 2 + 1), 2)
+            Do Until str2.Length >= 8
+                str2 = "0" + str2
+            Loop
+            Dim str = str1 + str2
+            Dim B5 As String = Mid(str, 2, 5)
+            Dim G5 As String = Mid(str, 7, 5)
+            Dim R5 As String = Mid(str, 12, 5)
+            tempColor(i) = Color.FromArgb(Convert.ToInt32(R5 + "000", 2), Convert.ToInt32(G5 + "000", 2), Convert.ToInt32(B5 + "000", 2))
+        Next
+        PAL2COL = tempColor
+    End Function
+    Public Sub PackToBinFile(inputDir As String, outputFilename As String)
+        Dim files As String() = Directory.GetFiles(inputDir, "head_*.dat")
+        Array.Sort(files)
+        If files.Length = 0 Then
+            Return
+        End If
+        Dim chunks As New List(Of Byte())()
+        For Each fname In files
+            Dim blob As Byte() = File.ReadAllBytes(fname)
+            Dim colorNum As Integer = blob(2) * 256 + blob(3)
+            Dim width As Integer = blob(4) * 256 + blob(5)
+            Dim height As Integer = blob(6) * 256 + blob(7)
+            Dim begin As Integer = blob.Count
+            Dim colors As Color() = PAL2COL(blob, 16, colorNum)
+            Dim imageFile As String = Path.Combine(inputDir, "image_" + Path.GetFileNameWithoutExtension(fname).Substring(5) + ".png")
+            Dim image As Bitmap = New Bitmap(imageFile)
+            image = ConvertImageToPalette(image, colors)
+            ReDim Preserve blob(blob.Length + width * height - 1)
+            For y = 0 To height - 1
+                For x = 0 To width - 1
+                    Dim color = image.GetPixel(x, y)
+                    For c = 0 To colors.Count - 1
+                        If color.ToArgb = colors(c).ToArgb Then
+                            blob(begin + y * width + x) = c
+                        End If
+                    Next
+                Next
+            Next
+            chunks.Add(CompressData(blob))
+        Next
+        Dim fs As New FileStream(outputFilename, FileMode.Create, FileAccess.Write)
+        Dim bw As New BinaryWriter(fs, Encoding.ASCII)
+        Dim numImages As UInteger = CUInt(chunks.Count)
+        bw.Write(IPAddress.HostToNetworkOrder(CInt(numImages)))
+        For Each chunk In chunks
+            bw.Write(IPAddress.HostToNetworkOrder(chunk.Length))
+        Next
+        For Each chunk In chunks
+            bw.Write(chunk)
+        Next
+        bw.Close()
+        fs.Close()
+    End Sub
+    Public Function RGB24ToByte(Color As Color) As Byte()
+        Dim R As String = Convert.ToString(Color.R, 2)
+        Dim G As String = Convert.ToString(Color.G, 2)
+        Dim B As String = Convert.ToString(Color.B, 2)
+        Do Until R.Length >= 8
+            R = "0" + R
+        Loop
+        Do Until G.Length >= 8
+            G = "0" + G
+        Loop
+        Do Until B.Length >= 8
+            B = "0" + B
+        Loop
+        Dim A1 As String = "0"
+        If Color.A > 0 Then
+            A1 = "1"
+        End If
+        Dim R5 As String = Mid(R, 1, 5)
+        Dim G5 As String = Mid(G, 1, 5)
+        Dim B5 As String = Mid(B, 1, 5)
+        Dim d = Convert.ToUInt16(A1 + B5 + G5 + R5, 2)
+        Dim d2 = d Mod 256
+        Dim d1 = (d - d Mod 256) / 256
+        RGB24ToByte = {d2, d1}
+    End Function
+    Public Function ConvertImageToPalette(image As Image, palette As Color()) As Image
+        Dim bmp As New Bitmap(image)
+        Dim width As Integer = bmp.Width
+        Dim height As Integer = bmp.Height
+        Dim rect As New Rectangle(0, 0, width, height)
+        Dim bmpData As BitmapData = bmp.LockBits(rect, ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb)
+        Dim bytesPerPixel As Integer = 4
+        Dim stride As Integer = bmpData.Stride
+        Dim scan0 As IntPtr = bmpData.Scan0
+        Dim pixels As Byte() = New Byte(stride * height - 1) {}
+        System.Runtime.InteropServices.Marshal.Copy(scan0, pixels, 0, pixels.Length)
+        Dim paletteR As Integer() = New Integer(palette.Length - 1) {}
+        Dim paletteG As Integer() = New Integer(palette.Length - 1) {}
+        Dim paletteB As Integer() = New Integer(palette.Length - 1) {}
+        For i As Integer = 0 To palette.Length - 1
+            paletteR(i) = palette(i).R
+            paletteG(i) = palette(i).G
+            paletteB(i) = palette(i).B
+        Next
+        For y As Integer = 0 To height - 1
+            For x As Integer = 0 To width - 1
+                Dim index As Integer = y * stride + x * bytesPerPixel
+                Dim b As Integer = pixels(index)
+                Dim g As Integer = pixels(index + 1)
+                Dim r As Integer = pixels(index + 2)
+                Dim a As Integer = pixels(index + 3)
+                Dim minDistance As Long = Long.MaxValue
+                Dim bestColor As Color = palette(0)
+                For i As Integer = 0 To palette.Length - 1
+                    Dim dr As Integer = r - paletteR(i)
+                    Dim dg As Integer = g - paletteG(i)
+                    Dim db As Integer = b - paletteB(i)
+                    Dim distance As Long = dr * dr + dg * dg + db * db
+                    If distance < minDistance Then
+                        minDistance = distance
+                        bestColor = palette(i)
+                    End If
+                Next
+                pixels(index) = bestColor.B
+                pixels(index + 1) = bestColor.G
+                pixels(index + 2) = bestColor.R
+                pixels(index + 3) = a
+            Next
+        Next
+        System.Runtime.InteropServices.Marshal.Copy(pixels, 0, scan0, pixels.Length)
+        bmp.UnlockBits(bmpData)
+        Return CType(bmp.Clone(), Image)
     End Function
 End Module
